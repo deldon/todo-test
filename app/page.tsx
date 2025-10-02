@@ -1,9 +1,16 @@
-import { getAllTodo} from "./(dataMapper)/todoDataMapper";
+import { getAllTodo } from "./(dataMapper)/todoDataMapper";
 import TodoInput from "./(composent)/addTodo";
 import DeleteTodo from "./(composent)/DeleteTodo";
+import { Todo } from "./(dataMapper)/types";
 
 export default async function Home() {
-  const todos = await getAllTodo();
+  let todos: Todo[] = [];
+  try {
+    todos = await getAllTodo(); // Retournera [] si BDD inaccessible
+  } catch (err) {
+    console.error("Erreur lors de la récupération des todos :", err);
+    todos = [];
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6">
@@ -17,7 +24,9 @@ export default async function Home() {
       {/* Liste des todos */}
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-4">
         {todos.length === 0 ? (
-          <p className="text-gray-500 text-center">Aucune tâche pour le moment.</p>
+          <p className="text-gray-500 text-center">
+            Aucune tâche pour le moment.
+          </p>
         ) : (
           <ul className="space-y-2">
             {todos.map((todo) => (
